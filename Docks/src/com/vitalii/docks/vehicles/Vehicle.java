@@ -1,95 +1,116 @@
 package com.vitalii.docks.vehicles;
 
 import java.util.Stack;
-import com.vitalii.docks.containers.Container;
+import com.vitalii.docks.containers.BasicContainer;
+import com.vitalii.docks.containers.HeavyContainer;
+import com.vitalii.docks.containers.RefrigeratedContainer;
 
 public abstract class Vehicle {
 
-	private int capacityToxic;
-	private int capacityExplosive;
-	private int capacityRefrigerated;
-	private int capacityHeavy;
-	private int capacity;
-	private int loadedToxic;
-	private int loadedExplosive;
-	private int loadedRefrigerated;
-	private int loadedHeavy;
-	private int loadedContainers;
+	private int maxNumToxic;
+	private int maxNumExplosive;
+	private int maxNumRefrigerated;
+	private int maxNumHeavy;
+	private int maxNumBasic;
+	private int hasNumToxic;
+	private int hasNumExplosive;
+	private int hasNumRefrigerated;
+	private int hasNumHeavy;
+	private int hasNumBasic;
 	
-	Stack<Container> cargo = new Stack<Container>();
+	Stack<BasicContainer> cargo = new Stack<BasicContainer>();
 	
-	public int getCapacityToxic() {
-		return capacityToxic;
+	public Vehicle(int maxNumToxic, int maxNumExposive, int maxNumRefrigerated, int maxNumHeavy, int maxNumBasic) {
+		
 	}
-	public int getCapacityExplosive() {
-		return capacityExplosive;
+	
+	public int getMaxNumToxic() {
+		return maxNumToxic;
 	}
-	public int getCapacityRefrigerated() {
-		return capacityRefrigerated;
+	public int getMaxNumExplosive() {
+		return maxNumExplosive;
 	}
-	public int getCapacityHeavy() {
-		return capacityHeavy;
+	public int getMaxNumRefrigerated() {
+		return maxNumRefrigerated;
 	}
-	public int getCapacity() {
-		return capacity;
+	public int getMaxNumHeavy() {
+		return maxNumHeavy;
 	}
-	public void setCapacityToxic(int capacityToxic) {
-		if ((capacityExplosive + capacityToxic) <= capacity) {
-			this.capacityToxic = capacityToxic;
+	public int getMaxNumBasic() {
+		return maxNumBasic;
+	}
+	public void setMaxNumToxic(int maxNumToxic) {
+		if ((maxNumExplosive + maxNumToxic) <= maxNumBasic) {
+			this.maxNumToxic = maxNumToxic;
 		}
 	}
-	public void setCapacityExplosive(int capacityExplosive) {
-		if ((capacityExplosive + capacityToxic) <= capacity) {
-			this.capacityExplosive = capacityExplosive;
+	public void setMaxNumExplosive(int maxNumExplosive) {
+		if ((maxNumExplosive + maxNumToxic) <= maxNumBasic) {
+			this.maxNumExplosive = maxNumExplosive;
 		}
 	}
-	public void setCapacityRefrigerated(int capacityRefrigerated) {
-		if (capacityRefrigerated <= capacityHeavy) {
-			this.capacityRefrigerated = capacityRefrigerated;
+	public void setMaxNumRefrigerated(int maxNumRefrigerated) {
+		if (maxNumRefrigerated <= maxNumHeavy) {
+			this.maxNumRefrigerated = maxNumRefrigerated;
 		}
 	}
-	public void setCapacityHeavy(int capacityHeavy) {
-		if (capacityHeavy <= capacity) {
-			this.capacityHeavy = capacityHeavy;
+	public void setMaxNumHeavy(int maxNumHeavy) {
+		if (maxNumHeavy <= maxNumBasic) {
+			this.maxNumHeavy = maxNumHeavy;
 		}
 	}
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
+	public void setMaxNumBasic(int maxNumBasic) {
+		this.maxNumBasic = maxNumBasic;
 	}
-	public int getLoadedToxic() {
-		return loadedToxic;
+	public int getNumToxic() {
+		return hasNumToxic;
 	}
-	public int getLoadedExplosive() {
-		return loadedExplosive;
+	public int getNumExplosive() {
+		return hasNumExplosive;
 	}
-	public int getLoadedRefrigerated() {
-		return loadedRefrigerated;
+	public int getNumRefrigerated() {
+		return hasNumRefrigerated;
 	}
-	public int getLoadedHeavy() {
-		return loadedHeavy;
+	public int getNumHeavy() {
+		return hasNumHeavy;
 	}
-	public int getLoadedContainers() {
-		return loadedContainers;
+	public int getNumBasic() {
+		return hasNumBasic;
 	}
-	public void setLoadedToxic(int loadedToxic) {
-		this.loadedToxic = loadedToxic;
+	public void setNumToxic(int hasNumToxic) {
+		this.hasNumToxic = hasNumToxic;
 	}
-	public void setLoadedExplosive(int loadedExplosive) {
-		this.loadedExplosive = loadedExplosive;
+	public void setNumExplosive(int hasNumExplosive) {
+		this.hasNumExplosive = hasNumExplosive;
 	}
-	public void setLoadedRefrigerated(int loadedRefrigerated) {
-		this.loadedRefrigerated = loadedRefrigerated;
+	public void setNumRefrigerated(int hasNumRefrigerated) {
+		this.hasNumRefrigerated = hasNumRefrigerated;
 	}
-	public void setLoadedHeavy(int loadedHeavy) {
-		this.loadedHeavy = loadedHeavy;
+	public void setNumHeavy(int hasNumHeavy) {
+		this.hasNumHeavy = hasNumHeavy;
 	}
-	public void setLoadedContainers(int loadedContainers) {
-		this.loadedContainers = loadedContainers;
+	public void setNumBasic(int hasNumBasic) {
+		this.hasNumBasic = hasNumBasic;
 	}
-	public void addContainer(Container con) {
-		if (con.isProtectedAgainstExplosive() && (this.loadedExplosive < this.capacityExplosive)) { 
+	public void addContainer(BasicContainer con) {		
+		if (con.isExplosiveProtected() && (this.hasNumExplosive < this.maxNumExplosive)) {
+			addContainerByType(con);
+			this.setNumExplosive(hasNumExplosive++);
+		} else if (con.isToxicProtected() && (this.hasNumToxic < this.maxNumToxic)) {
+			addContainerByType(con);
+			this.setNumToxic(hasNumToxic++);
+		}		
+	}
+	private void addContainerByType(BasicContainer con) {
+		if (con instanceof BasicContainer && (this.hasNumBasic < this.maxNumBasic)) {
 			cargo.push(con);
-			this.setLoadedExplosive(loadedExplosive++);
+			this.setNumBasic(hasNumBasic++);
+		} else if (con instanceof HeavyContainer && (this.hasNumHeavy < this.maxNumHeavy)) {
+			cargo.push(con);
+			this.setNumHeavy(hasNumHeavy++);
+		} else if (con instanceof RefrigeratedContainer && (this.hasNumRefrigerated < this.maxNumRefrigerated)) {
+			cargo.push(con);
+			this.setNumRefrigerated(hasNumRefrigerated++);
 		}
 	}
 }
