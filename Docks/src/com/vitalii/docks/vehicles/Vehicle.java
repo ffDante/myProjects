@@ -14,7 +14,7 @@ public abstract class Vehicle {
 	private int hasNumHeavy;
 	private int hasNumBasic;
 	
-	Stack<BasicContainer> cargo = new Stack<BasicContainer>();
+	Stack<BasicContainer> cargo = new Stack<>();
 	
 	public Vehicle(VehicleCapacity vc) {
 		this.capacity = vc;
@@ -71,10 +71,18 @@ public abstract class Vehicle {
 		} else if (con instanceof HeavyContainer && (this.hasNumHeavy < capacity.getMaxNumHeavy())) {
 			cargo.push(con);
 			this.setNumHeavy(hasNumHeavy++);
+			this.setNumBasic(hasNumBasic++);
 		} else if (con instanceof RefrigeratedContainer && (this.hasNumRefrigerated < capacity.getMaxNumRefrigerated())) {
 			cargo.push(con);
 			this.setNumRefrigerated(hasNumRefrigerated++);
+			this.setNumHeavy(hasNumHeavy++);
+			this.setNumBasic(hasNumBasic++);
 		}
 	}
-	
+	boolean isEmpty() {
+		return hasNumBasic == 0;
+	}
+	BasicContainer nextAvailableContainer() {
+        return cargo.peek();
+    }
 }
