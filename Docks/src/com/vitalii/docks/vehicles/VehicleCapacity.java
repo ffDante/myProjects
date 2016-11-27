@@ -2,7 +2,7 @@ package com.vitalii.docks.vehicles;
 
 import com.vitalii.docks.exceptions.IllegalCapacityException;
 
-public abstract class VehicleCapacity {
+public class VehicleCapacity {
 	
 	private int maxNumToxic;
 	private int maxNumExplosive;

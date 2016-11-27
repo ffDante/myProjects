@@ -1,9 +1,11 @@
 package com.vitalii.docks.vehicles;
 
-import java.util.Stack;
 import com.vitalii.docks.containers.BasicContainer;
 import com.vitalii.docks.containers.HeavyContainer;
 import com.vitalii.docks.containers.RefrigeratedContainer;
+
+import java.util.ArrayList;
+import java.util.Stack;
 
 public abstract class Vehicle {
 
@@ -16,10 +18,11 @@ public abstract class Vehicle {
 	
 	Stack<BasicContainer> cargo = new Stack<>();
 	
+	public Vehicle() {}
 	public Vehicle(VehicleCapacity vc) {
 		this.capacity = vc;
-	}	
-	
+	}
+
 	public int getNumToxic() {
 		return hasNumToxic;
 	}
@@ -50,38 +53,48 @@ public abstract class Vehicle {
 	public void setNumBasic(int hasNumBasic) {
 		this.hasNumBasic = hasNumBasic;
 	}
-	void addContainer(BasicContainer con) {		
-		if (con.isExplosiveProtected() && (this.hasNumExplosive < capacity.getMaxNumExplosive())) {
-			addContainerByType(con);
-			this.setNumExplosive(hasNumExplosive++);
-		} else if (con.isToxicProtected() && (this.hasNumToxic < capacity.getMaxNumToxic())) {
-			addContainerByType(con);
-			this.setNumToxic(hasNumToxic++);
-		}		
+	public boolean addContainer(BasicContainer container) {
+		if (container.isExplosiveProtected() && (this.hasNumExplosive < capacity.getMaxNumExplosive())) {
+			addContainerByType(container);
+			this.setNumExplosive(++hasNumExplosive);
+		} else if (container.isToxicProtected() && (this.hasNumToxic < capacity.getMaxNumToxic())) {
+			addContainerByType(container);
+			this.setNumToxic(++hasNumToxic);
+		}
+		return nextAvailableContainer().equals(container);
 	}
-	void addContainers(BasicContainer... cons) {
-		for (BasicContainer con : cons) {
-			addContainer(con);
+	public void addContainers(BasicContainer... containers) {
+		for (BasicContainer container : containers) {
+			addContainer(container);
 		}
 	}
-	private void addContainerByType(BasicContainer con) {
-		if (con instanceof BasicContainer && (this.hasNumBasic < capacity.getMaxNumBasic())) {
-			cargo.push(con);
-			this.setNumBasic(hasNumBasic++);
-		} else if (con instanceof HeavyContainer && (this.hasNumHeavy < capacity.getMaxNumHeavy())) {
-			cargo.push(con);
-			this.setNumHeavy(hasNumHeavy++);
-			this.setNumBasic(hasNumBasic++);
-		} else if (con instanceof RefrigeratedContainer && (this.hasNumRefrigerated < capacity.getMaxNumRefrigerated())) {
-			cargo.push(con);
-			this.setNumRefrigerated(hasNumRefrigerated++);
-			this.setNumHeavy(hasNumHeavy++);
-			this.setNumBasic(hasNumBasic++);
+
+	public void addContainers(ArrayList<BasicContainer> containers) {
+		for (BasicContainer container : containers) {
+			addContainer(container);
 		}
 	}
-	boolean isEmpty() {
-		return hasNumBasic == 0;
+
+	private void addContainerByType(BasicContainer container) {
+		if (container instanceof RefrigeratedContainer && (this.hasNumRefrigerated < capacity.getMaxNumRefrigerated())) {
+			cargo.push(container);
+			this.setNumRefrigerated(++hasNumRefrigerated);
+			this.setNumHeavy(++hasNumHeavy);
+			this.setNumBasic(++hasNumBasic);
+		} else if (container instanceof HeavyContainer && (this.hasNumHeavy < capacity.getMaxNumHeavy())) {
+			cargo.push(container);
+			this.setNumHeavy(++hasNumHeavy);
+			this.setNumBasic(++hasNumBasic);
+		} else if (container instanceof BasicContainer && (this.hasNumBasic < capacity.getMaxNumBasic())) {
+			cargo.push(container);
+			this.setNumBasic(++hasNumBasic);
+		}
 	}
+
+	public boolean isEmpty() {
+		return (hasNumBasic == 0);
+	}
+
 	BasicContainer nextAvailableContainer() {
         return cargo.peek();
     }
