@@ -3,6 +3,8 @@ package com.vitalii.docks.vehicles;
 import com.vitalii.docks.containers.BasicContainer;
 import com.vitalii.docks.containers.HeavyContainer;
 import com.vitalii.docks.containers.RefrigeratedContainer;
+import com.vitalii.docks.forklifts.Forklift;
+import com.vitalii.docks.forklifts.SafetyForklift;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -53,25 +55,28 @@ public abstract class Vehicle {
 	public void setNumBasic(int hasNumBasic) {
 		this.hasNumBasic = hasNumBasic;
 	}
-	public boolean addContainer(BasicContainer container) {
-		if (container.isExplosiveProtected() && (this.hasNumExplosive < capacity.getMaxNumExplosive())) {
+	public boolean addContainer(BasicContainer container, Forklift forklift) {
+		if (container.isExplosiveProtected() && forklift instanceof SafetyForklift && (this.hasNumExplosive < capacity.getMaxNumExplosive())) {
 			addContainerByType(container);
 			this.setNumExplosive(++hasNumExplosive);
-		} else if (container.isToxicProtected() && (this.hasNumToxic < capacity.getMaxNumToxic())) {
+		} else if (container.isToxicProtected() && forklift instanceof SafetyForklift && (this.hasNumToxic < capacity.getMaxNumToxic())) {
 			addContainerByType(container);
 			this.setNumToxic(++hasNumToxic);
+		} else {
+			addContainerByType(container);
 		}
-		return nextAvailableContainer().equals(container);
+		return container.equals(nextAvailableContainer());
 	}
-	public void addContainers(BasicContainer... containers) {
+
+	public void addContainers(Forklift forklift, BasicContainer... containers) {
 		for (BasicContainer container : containers) {
-			addContainer(container);
+			addContainer(container, forklift);
 		}
 	}
 
-	public void addContainers(ArrayList<BasicContainer> containers) {
+	public void addContainers(Forklift forklift, ArrayList<BasicContainer> containers) {
 		for (BasicContainer container : containers) {
-			addContainer(container);
+			addContainer(container, forklift);
 		}
 	}
 
@@ -96,6 +101,10 @@ public abstract class Vehicle {
 	}
 
 	BasicContainer nextAvailableContainer() {
-        return cargo.peek();
+        if (!cargo.isEmpty()){
+            return cargo.peek();
+        } else {
+            return null;
+        }
     }
 }
