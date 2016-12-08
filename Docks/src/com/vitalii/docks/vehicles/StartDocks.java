@@ -18,11 +18,15 @@ public class StartDocks {
 
         VehicleCapacity regularBoatCapacity = new VehicleCapacity(10,3,3,1,1);
         Vehicle boat1 = new Boat(regularBoatCapacity);
+        Forklift forklift1 = new Forklift();
+        Forklift safetyForklift1 = new SafetyForklift();
+        boat1.addContainer(containers.get(2), safetyForklift1);
 
-        Forklift safetyForklift1 = new SafetyForklift(containers.get(2), boat1);
-        if (!boat1.isEmpty() && boat1.nextAvailableContainer().equals(containers.get(2))
-                && boat1.getNumRefrigerated() == 1 && boat1.getNumHeavy() == 1 && boat1.getNumBasic() == 1) {
+        if (!boat1.isEmpty() && containers.get(2).equals(boat1.nextAvailableContainer())
+                && boat1.getNumRefrigerated() == 1 && boat1.getNumHeavy() == 1 && boat1.getNumBasic() == 1 && boat1.getNumExplosive() == 1) {
             System.out.println("Explosive refrigerated container was successfully loaded to Boat1");
+        } else {
+            System.out.println("Sorry, it didn't work!");
         }
     }
 }
